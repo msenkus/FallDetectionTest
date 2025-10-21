@@ -1,5 +1,6 @@
 // lib/services/mqtt_service.dart
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -49,18 +50,36 @@ class MqttService {
     // Set secure flag based on the URL scheme
     client!.secure = uri.scheme == 'wss';
     
+    // IMPORTANT: For desktop/macOS with WSS, we need a custom SecurityContext
+    // to avoid "Unsupported operation: default SecurityContext getter" error
+    if (client!.secure) {
+      try {
+        // Create a permissive SecurityContext that accepts all certificates
+        final context = SecurityContext.defaultContext;
+        context.setTrustedCertificatesBytes([]); // Empty list allows all certs
+        client!.securityContext = context;
+        
+        // Also set the bad certificate callback as backup
+        client!.onBadCertificate = (dynamic cert) {
+          print('⚠️ Accepting certificate for secure WebSocket connection');
+          return true;
+        };
+        
+        print('✓ Configured secure WebSocket with custom SecurityContext');
+      } catch (e) {
+        print('⚠️ Could not set custom SecurityContext: $e');
+        print('   Trying without SecurityContext...');
+        
+        // If SecurityContext fails, try just the callback
+        client!.onBadCertificate = (dynamic cert) {
+          return true;
+        };
+      }
+    }
+    
     // Callbacks
     client!.onConnected = _onConnected;
     client!.onDisconnected = _onDisconnected;
-    
-    // IMPORTANT: For desktop/macOS, we need to handle SSL differently
-    // Accept all certificates to avoid SecurityContext issues
-    if (client!.secure) {
-      client!.onBadCertificate = (dynamic cert) {
-        print('Warning: Bad certificate detected, allowing connection');
-        return true; // Accept the certificate
-      };
-    }
     
     // Set up connection message
     final connMessage = MqttConnectMessage()
@@ -145,15 +164,40 @@ class MqttService {
     try {
       // Convert Uint8Buffer to Uint8List
       final bytes = Uint8List.fromList(payload.toList());
-      final byteData = ByteData.sublistView(bytes);
       
+      // Minimum size check: 8 bytes header + at least 152 bytes per person
+      if (bytes.length < 8) {
+        print('⚠️ Skeleton data too small: ${bytes.length} bytes');
+        _skeletonController.add(SkeletonFrame([]));
+        return;
+      }
+      
+      final byteData = ByteData.sublistView(bytes);
       int offset = 0;
       
-      // Read number of people
-      final numPeople = byteData.getUint8(offset);
-      offset += 1;
+      // Read frame number (4 bytes, int32)
+      final frameNum = byteData.getInt32(offset, Endian.little);
+      offset += 4;
       
-      if (numPeople == 0) {
+      // Read number of people (4 bytes, int32)
+      final numPeople = byteData.getInt32(offset, Endian.little);
+      offset += 4;
+      
+      print('📦 Frame $frameNum: $numPeople person(s), ${bytes.length} bytes');
+      
+      if (numPeople == 0 || numPeople > 10) {
+        // Sanity check: more than 10 people is suspicious
+        if (numPeople > 10) {
+          print('⚠️ Suspicious numPeople: $numPeople (ignoring frame)');
+        }
+        _skeletonController.add(SkeletonFrame([]));
+        return;
+      }
+      
+      // Each person = 152 bytes (4 + 72 + 72 + 4)
+      final expectedSize = 8 + (numPeople * 152);
+      if (bytes.length < expectedSize) {
+        print('⚠️ Data too small: ${bytes.length} bytes, expected $expectedSize');
         _skeletonController.add(SkeletonFrame([]));
         return;
       }
@@ -161,24 +205,47 @@ class MqttService {
       List<List<SkeletonKeypoint>> people = [];
       
       for (int i = 0; i < numPeople; i++) {
-        List<SkeletonKeypoint> keypoints = [];
+        // Each person structure (152 bytes):
+        // - personId: 4 bytes (int32)
+        // - X coordinates: 18 floats (72 bytes)
+        // - Y coordinates: 18 floats (72 bytes)  
+        // - padding: 4 bytes
         
-        // Read 18 keypoints (x, y as floats)
+        // Read person ID (4 bytes)
+        final personId = byteData.getInt32(offset, Endian.little);
+        offset += 4;
+        
+        // Read X coordinates (18 × float32 = 72 bytes)
+        List<double> xCoords = [];
         for (int j = 0; j < 18; j++) {
-          final x = byteData.getFloat32(offset, Endian.little);
+          xCoords.add(byteData.getFloat32(offset, Endian.little));
           offset += 4;
-          final y = byteData.getFloat32(offset, Endian.little);
-          offset += 4;
-          
-          keypoints.add(SkeletonKeypoint(x, y));
         }
         
+        // Read Y coordinates (18 × float32 = 72 bytes)
+        List<double> yCoords = [];
+        for (int j = 0; j < 18; j++) {
+          yCoords.add(byteData.getFloat32(offset, Endian.little));
+          offset += 4;
+        }
+        
+        // Skip padding (4 bytes)
+        offset += 4;
+        
+        // Combine X and Y into keypoints
+        List<SkeletonKeypoint> keypoints = [];
+        for (int j = 0; j < 18; j++) {
+          keypoints.add(SkeletonKeypoint(xCoords[j], yCoords[j]));
+        }
+        
+        print('  Person $personId: ${keypoints.where((k) => k.x != 0 || k.y != 0).length}/18 keypoints visible');
         people.add(keypoints);
       }
       
       _skeletonController.add(SkeletonFrame(people));
-    } catch (e) {
-      print('Error parsing skeleton data: $e');
+    } catch (e, stackTrace) {
+      print('❌ Error parsing skeleton data: $e');
+      print('Stack trace: $stackTrace');
     }
   }
 

@@ -1,12 +1,17 @@
 // lib/screens/skeleton_viewer_screen.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/camera.dart';
 import '../models/skeleton_frame.dart';
 import '../services/api_service.dart';
-import '../services/mqtt_service.dart';
+import '../services/mqtt_service.dart' if (dart.library.html) '../services/mqtt_service_web.dart';
 import '../widgets/skeleton_painter.dart';
 
 class SkeletonViewerScreen extends StatefulWidget {
+  final String? initialCameraSerialNumber;
+  
+  const SkeletonViewerScreen({super.key, this.initialCameraSerialNumber});
+  
   @override
   _SkeletonViewerScreenState createState() => _SkeletonViewerScreenState();
 }
@@ -20,6 +25,10 @@ class _SkeletonViewerScreenState extends State<SkeletonViewerScreen> {
   SkeletonFrame? currentFrame;
   bool isConnected = false;
   bool isLoading = false;
+  
+  // Stream subscriptions for proper cleanup
+  StreamSubscription<bool>? _connectionSubscription;
+  StreamSubscription<SkeletonFrame>? _skeletonSubscription;
 
   @override
   void initState() {
@@ -27,17 +36,21 @@ class _SkeletonViewerScreenState extends State<SkeletonViewerScreen> {
     _loadCameras();
     
     // Listen to MQTT connection status
-    mqttService.connectionStream.listen((connected) {
-      setState(() {
-        isConnected = connected;
-      });
+    _connectionSubscription = mqttService.connectionStream.listen((connected) {
+      if (mounted) {
+        setState(() {
+          isConnected = connected;
+        });
+      }
     });
     
     // Listen to skeleton data
-    mqttService.skeletonStream.listen((frame) {
-      setState(() {
-        currentFrame = frame;
-      });
+    _skeletonSubscription = mqttService.skeletonStream.listen((frame) {
+      if (mounted) {
+        setState(() {
+          currentFrame = frame;
+        });
+      }
     });
   }
 
@@ -51,7 +64,15 @@ class _SkeletonViewerScreenState extends State<SkeletonViewerScreen> {
       setState(() {
         cameras = cameraList;
         if (cameraList.isNotEmpty) {
-          selectedCamera = cameraList[0];
+          // If an initial camera serial number was provided, try to select it
+          if (widget.initialCameraSerialNumber != null) {
+            selectedCamera = cameraList.firstWhere(
+              (camera) => camera.serialNumber == widget.initialCameraSerialNumber,
+              orElse: () => cameraList[0],
+            );
+          } else {
+            selectedCamera = cameraList[0];
+          }
         }
         isLoading = false;
       });
@@ -180,7 +201,13 @@ class _SkeletonViewerScreenState extends State<SkeletonViewerScreen> {
 
   @override
   void dispose() {
+    // Cancel stream subscriptions
+    _connectionSubscription?.cancel();
+    _skeletonSubscription?.cancel();
+    
+    // Dispose MQTT service
     mqttService.dispose();
+    
     super.dispose();
   }
 }

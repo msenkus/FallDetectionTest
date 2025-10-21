@@ -60,14 +60,83 @@ class ApiService {
   }
 
   Future<Alert> getAlertById(String alertId) async {
+    print('🔍 Fetching alert: $alertId from $baseUrl/api/skeleton/alerts/$alertId');
+    
     final response = await http.get(
       Uri.parse('$baseUrl/api/skeleton/alerts/$alertId'),
     );
 
+    print('📥 Response status: ${response.statusCode}');
+    
     if (response.statusCode == 200) {
-      return Alert.fromJson(jsonDecode(response.body));
+      print('✅ Response body length: ${response.body.length}');
+      final jsonData = jsonDecode(response.body);
+      print('📝 Parsed JSON keys: ${jsonData.keys.toList()}');
+      print('📝 Alert ID from response: ${jsonData['id']}');
+      return Alert.fromJson(jsonData);
     } else {
+      print('❌ Error response: ${response.body}');
       throw Exception('Failed to load alert: ${response.statusCode}');
+    }
+  }
+
+  /// Get decoded skeleton data for an alert
+  /// Returns the skeleton data in JSON format (already decoded from binary)
+  Future<Map<String, dynamic>> getAlertSkeletonDecoded(String alertId) async {
+    print('🦴 Fetching decoded skeleton for alert: $alertId');
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/skeleton/alerts/$alertId/skeleton-decoded'),
+    );
+
+    print('📥 Skeleton response status: ${response.statusCode}');
+    
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      print('✅ Decoded skeleton data received');
+      return jsonData as Map<String, dynamic>;
+    } else {
+      print('❌ Error getting skeleton: ${response.body}');
+      throw Exception('Failed to load skeleton data: ${response.statusCode}');
+    }
+  }
+
+  /// Get fresh background image URL for an alert
+  /// This fetches a new pre-signed S3 URL that won't be expired
+  Future<String> getAlertBackgroundUrl(String alertId) async {
+    print('🖼️ Fetching fresh background URL for alert: $alertId');
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/skeleton/alerts/$alertId/background-url'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      final url = jsonData['background_url'] as String;
+      print('✅ Fresh background URL received');
+      return url;
+    } else {
+      print('❌ Error getting background URL: ${response.body}');
+      throw Exception('Failed to load background URL: ${response.statusCode}');
+    }
+  }
+
+  /// Get video clip URL for an alert
+  Future<String> getAlertVideoUrl(String alertId) async {
+    print('🎥 Fetching video URL for alert: $alertId');
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/skeleton/alerts/$alertId/video-url'),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      final url = jsonData['video_url'] as String;
+      print('✅ Video URL received');
+      return url;
+    } else {
+      print('❌ Error getting video URL: ${response.body}');
+      throw Exception('Failed to load video URL: ${response.statusCode}');
     }
   }
 

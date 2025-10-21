@@ -369,7 +369,7 @@ public class AltumViewService {
                     log.warn("⚠ Alert {} has NO skeleton_file in response", alertId);
                 }
                 
-                Alert alert = mapToAlert(alertData);
+                Alert alert = mapToAlert(alertData, alertId);
                 log.info("✓ Successfully mapped alert {}", alertId);
                 return alert;
             }
@@ -379,6 +379,104 @@ public class AltumViewService {
         } catch (Exception e) {
             log.error("✗ Error getting alert {}: {}", alertId, e.getMessage(), e);
             throw new RuntimeException("Failed to get alert: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Get fresh background image URL for an alert
+     * This requests a new pre-signed S3 URL from AltumView
+     * 
+     * According to AltumView API docs:
+     * GET /alerts/{alertId}/background
+     * Returns: { "data": { "background_url": "https://..." } }
+     */
+    public String getAlertBackgroundUrl(String alertId) {
+        String token = getAccessToken();
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        
+        try {
+            log.info("Requesting fresh background URL for alert {}", alertId);
+            
+            ResponseEntity<Map> response = restTemplate.exchange(
+                apiUrl + "/alerts/" + alertId + "/background",
+                HttpMethod.GET,
+                entity,
+                Map.class
+            );
+            
+            Map<String, Object> body = response.getBody();
+            
+            if (body != null && body.containsKey("data")) {
+                Map<String, Object> data = (Map<String, Object>) body.get("data");
+                String backgroundUrl = (String) data.get("background_url");
+                
+                if (backgroundUrl != null && !backgroundUrl.isEmpty()) {
+                    log.info("✓ Retrieved fresh background URL for alert {}", alertId);
+                    return backgroundUrl;
+                }
+            }
+            
+            throw new RuntimeException("No background URL available for alert");
+            
+        } catch (Exception e) {
+            log.error("✗ Error getting alert background URL: {}", e.getMessage());
+            throw new RuntimeException("Failed to get alert background URL: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Get video clip URL for an alert
+     * 
+     * According to AltumView API docs:
+     * GET /alerts/{alertId}/video or /alerts/{alertId}/clip
+     * Returns: { "data": { "video_url": "https://..." } }
+     */
+    public String getAlertVideoUrl(String alertId) {
+        String token = getAccessToken();
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        
+        try {
+            log.info("Requesting video URL for alert {}", alertId);
+            
+            // Try /video endpoint first
+            ResponseEntity<Map> response = restTemplate.exchange(
+                apiUrl + "/alerts/" + alertId + "/video",
+                HttpMethod.GET,
+                entity,
+                Map.class
+            );
+            
+            Map<String, Object> body = response.getBody();
+            
+            if (body != null && body.containsKey("data")) {
+                Map<String, Object> data = (Map<String, Object>) body.get("data");
+                
+                // Try different possible field names
+                String videoUrl = (String) data.get("video_url");
+                if (videoUrl == null) {
+                    videoUrl = (String) data.get("clip_url");
+                }
+                if (videoUrl == null) {
+                    videoUrl = (String) data.get("url");
+                }
+                
+                if (videoUrl != null && !videoUrl.isEmpty()) {
+                    log.info("✓ Retrieved video URL for alert {}", alertId);
+                    return videoUrl;
+                }
+            }
+            
+            throw new RuntimeException("No video URL available for alert");
+            
+        } catch (Exception e) {
+            log.error("✗ Error getting alert video URL: {}", e.getMessage());
+            throw new RuntimeException("Failed to get alert video URL: " + e.getMessage(), e);
         }
     }
     
@@ -434,6 +532,10 @@ public class AltumViewService {
     }
     
     private Alert mapToAlert(Map<String, Object> data) {
+        return mapToAlert(data, null);
+    }
+    
+    private Alert mapToAlert(Map<String, Object> data, String providedAlertId) {
         Alert alert = new Alert();
         
         // API returns serial_number, but we also set it as camera_serial_number for compatibility
@@ -459,9 +561,13 @@ public class AltumViewService {
         alert.setRoomName((String) data.get("room_name"));
         alert.setCameraName((String) data.get("camera_name"));
         alert.setIsResolved((Boolean) data.get("is_resolved"));
+        alert.setBackgroundUrl((String) data.get("background_url"));
         
-        // Generate ID from camera + timestamp if not present
-        String id = (String) data.get("id");
+        // Use provided alert ID if available, otherwise try to get from data or generate
+        String id = providedAlertId;
+        if (id == null) {
+            id = (String) data.get("id");
+        }
         if (id == null && serialNumber != null && unixTime != null) {
             id = serialNumber + "_" + unixTime;
         }
@@ -601,6 +707,56 @@ public class AltumViewService {
         } catch (Exception e) {
             log.error("✗ Error downloading camera background from S3: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to download camera background: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Get background image from alert
+     * Fetches the image from S3 and returns as bytes to avoid CORS issues
+     * Uses HttpURLConnection to avoid adding extra headers that break AWS signature
+     */
+    public byte[] getAlertBackground(String alertId) {
+        // Get the alert to extract background URL
+        Alert alert = getAlertById(alertId);
+        
+        if (alert.getBackgroundUrl() == null || alert.getBackgroundUrl().isEmpty()) {
+            throw new RuntimeException("No background URL available for alert " + alertId);
+        }
+        
+        String backgroundUrl = alert.getBackgroundUrl();
+        
+        try {
+            // Use HttpURLConnection instead of RestTemplate to avoid extra headers
+            java.net.URL url = new java.net.URL(backgroundUrl);
+            java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoInput(true);
+            
+            // Don't add ANY extra headers - AWS signature depends on it
+            int responseCode = connection.getResponseCode();
+            
+            if (responseCode == 200) {
+                // Read the image bytes
+                java.io.InputStream inputStream = connection.getInputStream();
+                java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+                
+                int nRead;
+                byte[] data = new byte[8192];
+                while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                
+                inputStream.close();
+                byte[] imageBytes = buffer.toByteArray();
+                
+                log.info("✓ Retrieved alert background image for alert {}, size: {} bytes", alertId, imageBytes.length);
+                return imageBytes;
+            } else {
+                throw new RuntimeException("Failed to get alert background: HTTP " + responseCode);
+            }
+        } catch (Exception e) {
+            log.error("✗ Error downloading alert background from S3: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to download alert background: " + e.getMessage(), e);
         }
     }
     

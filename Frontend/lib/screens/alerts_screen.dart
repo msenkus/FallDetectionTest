@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import '../models/alert.dart';
 import '../models/skeleton_frame.dart';
 import '../services/api_service.dart';
 import '../widgets/skeleton_painter.dart';
+import 'skeleton_viewer_screen.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -74,7 +74,17 @@ class _AlertsScreenState extends State<AlertsScreen> {
       print('Loading details for alert: ${alert.id}');
       
       // Fetch full alert details with skeleton file
+      // The alert includes a fresh background_url with updated expiration
       final fullAlert = await _apiService.getAlertById(alert.id);
+      
+      print('Background URL available: ${fullAlert.backgroundUrl != null}');
+      if (fullAlert.backgroundUrl != null) {
+        print('Background URL: ${fullAlert.backgroundUrl!.substring(0, 80)}...');
+      }
+      
+      setState(() {
+        _selectedAlert = fullAlert;
+      });
       
       print('Alert details loaded, has skeleton file: ${fullAlert.skeletonFile != null}');
       
@@ -82,31 +92,18 @@ class _AlertsScreenState extends State<AlertsScreen> {
         print('Skeleton file length: ${fullAlert.skeletonFile!.length}');
         
         try {
-          // Decode base64 skeleton file
-          final decodedBytes = base64Decode(fullAlert.skeletonFile!);
-          print('Decoded ${decodedBytes.length} bytes');
-          
-          final decodedString = utf8.decode(decodedBytes);
-          print('Decoded string length: ${decodedString.length}');
-          
-          final jsonData = jsonDecode(decodedString);
-          print('JSON decoded successfully');
+          // Get decoded skeleton data from backend (binary format already decoded to JSON)
+          final skeletonJson = await _apiService.getAlertSkeletonDecoded(alert.id);
+          print('✓ Skeleton data decoded successfully');
           
           // Parse skeleton data
-          final frame = SkeletonFrame.fromJson(jsonData);
+          final frame = SkeletonFrame.fromJson(skeletonJson);
           final totalKeypoints = frame.people.fold<int>(0, (sum, person) => sum + person.length);
           print('Skeleton frame parsed: ${frame.people.length} people, $totalKeypoints total keypoints');
           
           setState(() {
             _skeletonFrame = frame;
           });
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Loaded skeleton: ${frame.people.length} people, $totalKeypoints keypoints'),
-              backgroundColor: Colors.green,
-            ),
-          );
         } catch (e) {
           print('Error parsing skeleton data: $e');
           ScaffoldMessenger.of(context).showSnackBar(
@@ -337,11 +334,31 @@ class _AlertsScreenState extends State<AlertsScreen> {
               _buildInfoRow('Alert ID:', _selectedAlert!.id),
               _buildInfoRow('Camera:', _selectedAlert!.cameraSerialNumber),
               _buildInfoRow('Type:', _selectedAlert!.alertType),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SkeletonViewerScreen(
+                        initialCameraSerialNumber: _selectedAlert!.cameraSerialNumber,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.videocam),
+                label: const Text('View Live Skeleton'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+              ),
             ],
           ),
         ),
         
-        // Skeleton visualization
+        // Alert visualization (background image + skeleton overlay)
         Expanded(
           child: _skeletonFrame == null
               ? const Center(
@@ -350,7 +367,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 16),
-                      Text('Loading skeleton data...'),
+                      Text('Loading alert data...'),
                     ],
                   ),
                 )
@@ -363,13 +380,174 @@ class _AlertsScreenState extends State<AlertsScreen> {
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300, width: 2),
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.grey.shade50,
+                        color: Colors.black,
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: CustomPaint(
-                          painter: SkeletonPainter(_skeletonFrame!),
-                          size: Size.infinite,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // Background image (proxied through backend to avoid CORS)
+                            if (_selectedAlert?.id != null)
+                              Image.network(
+                                'http://localhost:8080/api/skeleton/alerts/${_selectedAlert!.id}/background-image',
+                                fit: BoxFit.contain,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    print('✅ Background image loaded successfully');
+                                    return child;
+                                  }
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          value: loadingProgress.expectedTotalBytes != null
+                                              ? loadingProgress.cumulativeBytesLoaded /
+                                                  loadingProgress.expectedTotalBytes!
+                                              : null,
+                                        ),
+                                        SizedBox(height: 16),
+                                        Text(
+                                          'Loading background image...',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  print('❌ Background image failed to load: $error');
+                                  return Container(
+                                    color: Colors.grey.shade800,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.broken_image,
+                                            size: 64,
+                                            color: Colors.white54,
+                                          ),
+                                          SizedBox(height: 16),
+                                          Text(
+                                            'Background image unavailable',
+                                            style: TextStyle(color: Colors.white70),
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            'S3 URL may have expired',
+                                            style: TextStyle(
+                                              color: Colors.white54,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            else
+                              Container(
+                                color: Colors.grey.shade50,
+                                child: Center(
+                                  child: Text(
+                                    'No background image available',
+                                    style: TextStyle(color: Colors.grey.shade600),
+                                  ),
+                                ),
+                              ),
+                            
+                            // Skeleton overlay
+                            CustomPaint(
+                              painter: SkeletonPainter(_skeletonFrame!),
+                              size: Size.infinite,
+                            ),
+                            
+                            // Info overlay
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 12,
+                                          height: 12,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Keypoints',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 12,
+                                          height: 2,
+                                          color: Colors.green,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          'Skeleton',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    if (_selectedAlert?.backgroundUrl != null) ...[
+                                      const SizedBox(height: 4),
+                                      const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.image,
+                                            color: Colors.white,
+                                            size: 12,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Background',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

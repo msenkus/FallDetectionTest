@@ -37,4 +37,7 @@ public class Alert {
     
     @JsonProperty("is_resolved")
     private Boolean isResolved;
+    
+    @JsonProperty("background_url")
+    private String backgroundUrl;
 }

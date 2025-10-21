@@ -2,15 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.service.AltumViewService;
+import com.example.demo.util.SkeletonDecoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/skeleton")
@@ -38,6 +39,56 @@ public class SkeletonController {
     @GetMapping("/alerts/{alertId}")
     public ResponseEntity<Alert> getAlert(@PathVariable String alertId) {
         return ResponseEntity.ok(altumViewService.getAlertById(alertId));
+    }
+    
+    /**
+     * Get fresh background image URL for an alert
+     * This returns a new pre-signed S3 URL that won't be expired
+     */
+    @GetMapping("/alerts/{alertId}/background-url")
+    public ResponseEntity<Map<String, String>> getAlertBackgroundUrl(@PathVariable String alertId) {
+        try {
+            String backgroundUrl = altumViewService.getAlertBackgroundUrl(alertId);
+            return ResponseEntity.ok(Map.of("background_url", backgroundUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+    
+    /**
+     * Proxy endpoint to fetch background image and serve it
+     * This avoids CORS issues with S3 signed URLs
+     */
+    @GetMapping("/alerts/{alertId}/background-image")
+    public ResponseEntity<byte[]> getAlertBackgroundImage(@PathVariable String alertId) {
+        try {
+            byte[] imageBytes = altumViewService.getAlertBackground(alertId);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            headers.setCacheControl("no-cache");
+            
+            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new byte[0]);
+        }
+    }
+    
+    /**
+     * Get video clip URL for an alert
+     */
+    @GetMapping("/alerts/{alertId}/video-url")
+    public ResponseEntity<Map<String, String>> getAlertVideoUrl(@PathVariable String alertId) {
+        try {
+            String videoUrl = altumViewService.getAlertVideoUrl(alertId);
+            return ResponseEntity.ok(Map.of("video_url", videoUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
     
     @GetMapping("/alerts/{alertId}/skeleton")
@@ -74,6 +125,27 @@ public class SkeletonController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
+        }
+    }
+    
+    @GetMapping("/alerts/{alertId}/skeleton-decoded")
+    public ResponseEntity<Map<String, Object>> getAlertSkeletonDecoded(@PathVariable String alertId) {
+        try {
+            Alert alert = altumViewService.getAlertById(alertId);
+            
+            if (alert.getSkeletonFile() == null || alert.getSkeletonFile().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "No skeleton data available for this alert"));
+            }
+            
+            // Decode the REAL skeleton data from binary MQTT format
+            Map<String, Object> skeletonData = SkeletonDecoder.decode(alert.getSkeletonFile());
+            
+            return ResponseEntity.ok(skeletonData);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to decode skeleton data: " + e.getMessage()));
         }
     }
     
