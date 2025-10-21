@@ -760,6 +760,14 @@ public class AltumViewService {
         }
     }
     
+    /**
+     * Get the group ID from the token response
+     */
+    public Long getGroupId() {
+        TokenResponse tokenResponse = getTokenResponse();
+        return tokenResponse.getData().getGroupId();
+    }
+    
     private TokenResponse getTokenResponse() {
         try {
             // Manually build URL-encoded form data
