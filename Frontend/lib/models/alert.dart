@@ -1,7 +1,7 @@
 class Alert {
   final String id;
   final String alertType;
-  final String cameraSerialNumber;
+  final String? cameraSerialNumber;  // Made nullable to handle null from API
   final int createdAt;
   final String? skeletonFile;
   final String? backgroundUrl;
@@ -9,7 +9,7 @@ class Alert {
   Alert({
     required this.id,
     required this.alertType,
-    required this.cameraSerialNumber,
+    this.cameraSerialNumber,  // Now optional
     required this.createdAt,
     this.skeletonFile,
     this.backgroundUrl,

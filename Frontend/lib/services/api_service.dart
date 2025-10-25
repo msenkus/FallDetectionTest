@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/camera.dart';
 import '../models/skeleton_stream_config.dart';
 import '../models/alert.dart';
+import '../models/skeleton_frame.dart';
 
 class ApiService {
   final String baseUrl;
@@ -94,6 +95,13 @@ class ApiService {
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       print('✅ Decoded skeleton data received');
+      print('📝 JSON keys: ${jsonData.keys.toList()}');
+      if (jsonData.containsKey('totalFrames')) {
+        print('📊 Total frames in data: ${jsonData['totalFrames']}');
+      }
+      if (jsonData.containsKey('frames')) {
+        print('📊 Frames array length: ${(jsonData['frames'] as List).length}');
+      }
       return jsonData as Map<String, dynamic>;
     } else {
       print('❌ Error getting skeleton: ${response.body}');
@@ -166,5 +174,68 @@ class ApiService {
     } else {
       throw Exception('Failed to load camera background: ${response.statusCode}');
     }
+  }
+  
+  /// Parse decoded skeleton JSON data into SkeletonFrame objects
+  /// Handles both single-frame and multi-frame formats
+  List<SkeletonFrame> parseSkeletonFrames(Map<String, dynamic> skeletonData) {
+    List<SkeletonFrame> frames = [];
+    
+    print('🔍 parseSkeletonFrames - Input keys: ${skeletonData.keys.toList()}');
+    
+    // Check if this is multi-frame format
+    if (skeletonData.containsKey('frames') && skeletonData['frames'] is List) {
+      // Multi-frame format (alert skeleton files)
+      List<dynamic> frameList = skeletonData['frames'];
+      print('📦 Parsing ${frameList.length} frames from frames array');
+      
+      for (var frameData in frameList) {
+        if (frameData is Map<String, dynamic>) {
+          frames.add(_parseFrame(frameData));
+        }
+      }
+    } else if (skeletonData.containsKey('people')) {
+      // Single frame format (backward compatibility)
+      print('📦 Parsing single frame from people key');
+      frames.add(_parseFrame(skeletonData));
+    } else {
+      print('❌ No frames or people key found in skeleton data!');
+    }
+    
+    print('✅ Parsed ${frames.length} frames total');
+    return frames;
+  }
+  
+  /// Parse a single frame from JSON
+  SkeletonFrame _parseFrame(Map<String, dynamic> frameData) {
+    List<List<SkeletonKeypoint>> people = [];
+    
+    if (frameData.containsKey('people') && frameData['people'] is List) {
+      List<dynamic> peopleData = frameData['people'];
+      
+      for (var personData in peopleData) {
+        if (personData is List) {
+          List<SkeletonKeypoint> keypoints = [];
+          
+          for (var keypointData in personData) {
+            if (keypointData is List && keypointData.length >= 2) {
+              double x = (keypointData[0] as num).toDouble();
+              double y = (keypointData[1] as num).toDouble();
+              
+              // Skip invalid keypoints (0,0)
+              if (x == 0.0 && y == 0.0) continue;
+              
+              keypoints.add(SkeletonKeypoint(x, y));
+            }
+          }
+          
+          if (keypoints.isNotEmpty) {
+            people.add(keypoints);
+          }
+        }
+      }
+    }
+    
+    return SkeletonFrame(people);
   }
 }

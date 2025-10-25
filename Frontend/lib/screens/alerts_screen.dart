@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/alert.dart';
 import '../models/skeleton_frame.dart';
 import '../services/api_service.dart';
-import '../widgets/skeleton_painter.dart';
+import '../widgets/skeleton_video_player.dart';
 import 'skeleton_viewer_screen.dart';
 
 class AlertsScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
   bool _isLoading = true;
   String? _error;
   Alert? _selectedAlert;
-  SkeletonFrame? _skeletonFrame;
+  List<SkeletonFrame> _skeletonFrames = []; // Changed to list for video playback
 
   @override
   void initState() {
@@ -67,14 +67,13 @@ class _AlertsScreenState extends State<AlertsScreen> {
   Future<void> _loadAlertDetails(Alert alert) async {
     setState(() {
       _selectedAlert = alert;
-      _skeletonFrame = null;
+      _skeletonFrames = []; // Clear previous frames
     });
 
     try {
       print('Loading details for alert: ${alert.id}');
       
       // Fetch full alert details with skeleton file
-      // The alert includes a fresh background_url with updated expiration
       final fullAlert = await _apiService.getAlertById(alert.id);
       
       print('Background URL available: ${fullAlert.backgroundUrl != null}');
@@ -92,17 +91,23 @@ class _AlertsScreenState extends State<AlertsScreen> {
         print('Skeleton file length: ${fullAlert.skeletonFile!.length}');
         
         try {
-          // Get decoded skeleton data from backend (binary format already decoded to JSON)
+          // Get decoded skeleton data from backend (now returns multiple frames)
           final skeletonJson = await _apiService.getAlertSkeletonDecoded(alert.id);
           print('✓ Skeleton data decoded successfully');
           
-          // Parse skeleton data
-          final frame = SkeletonFrame.fromJson(skeletonJson);
-          final totalKeypoints = frame.people.fold<int>(0, (sum, person) => sum + person.length);
-          print('Skeleton frame parsed: ${frame.people.length} people, $totalKeypoints total keypoints');
+          // Parse ALL frames using the new helper method
+          final frames = _apiService.parseSkeletonFrames(skeletonJson);
+          print('Parsed ${frames.length} frames');
+          
+          if (frames.isNotEmpty) {
+            final totalPeople = frames.fold<int>(0, (sum, frame) => sum + frame.people.length);
+            final totalKeypoints = frames.fold<int>(0, (sum, frame) => 
+              sum + frame.people.fold<int>(0, (s, person) => s + person.length));
+            print('Total: $totalPeople people across ${frames.length} frames, $totalKeypoints total keypoints');
+          }
           
           setState(() {
-            _skeletonFrame = frame;
+            _skeletonFrames = frames;
           });
         } catch (e) {
           print('Error parsing skeleton data: $e');
@@ -332,18 +337,19 @@ class _AlertsScreenState extends State<AlertsScreen> {
               ),
               const SizedBox(height: 16),
               _buildInfoRow('Alert ID:', _selectedAlert!.id),
-              _buildInfoRow('Camera:', _selectedAlert!.cameraSerialNumber),
+              _buildInfoRow('Camera:', _selectedAlert!.cameraSerialNumber ?? 'Unknown'),
               _buildInfoRow('Type:', _selectedAlert!.alertType),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SkeletonViewerScreen(
-                        initialCameraSerialNumber: _selectedAlert!.cameraSerialNumber,
+              if (_selectedAlert!.cameraSerialNumber != null)
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SkeletonViewerScreen(
+                          initialCameraSerialNumber: _selectedAlert!.cameraSerialNumber,
+                        ),
                       ),
-                    ),
                   );
                 },
                 icon: const Icon(Icons.videocam),
@@ -353,14 +359,23 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
+              )
+            else
+              ElevatedButton.icon(
+                onPressed: null,
+                icon: const Icon(Icons.videocam_off),
+                label: const Text('Live View Unavailable'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
               ),
             ],
           ),
         ),
         
-        // Alert visualization (background image + skeleton overlay)
+        // Alert visualization (skeleton video player with background)
         Expanded(
-          child: _skeletonFrame == null
+          child: _skeletonFrames.isEmpty
               ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -371,186 +386,84 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     ],
                   ),
                 )
-              : _skeletonFrame!.people.isEmpty
-                  ? const Center(
-                      child: Text('No skeleton data available'),
-                    )
-                  : Container(
-                      margin: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300, width: 2),
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.black,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            // Background image (proxied through backend to avoid CORS)
-                            if (_selectedAlert?.id != null)
-                              Image.network(
-                                'http://localhost:8080/api/skeleton/alerts/${_selectedAlert!.id}/background-image',
-                                fit: BoxFit.contain,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    print('✅ Background image loaded successfully');
-                                    return child;
-                                  }
-                                  return Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded /
-                                                  loadingProgress.expectedTotalBytes!
-                                              : null,
-                                        ),
-                                        SizedBox(height: 16),
-                                        Text(
-                                          'Loading background image...',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (context, error, stackTrace) {
-                                  print('❌ Background image failed to load: $error');
-                                  return Container(
-                                    color: Colors.grey.shade800,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.broken_image,
-                                            size: 64,
-                                            color: Colors.white54,
-                                          ),
-                                          SizedBox(height: 16),
-                                          Text(
-                                            'Background image unavailable',
-                                            style: TextStyle(color: Colors.white70),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'S3 URL may have expired',
-                                            style: TextStyle(
-                                              color: Colors.white54,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              )
-                            else
-                              Container(
-                                color: Colors.grey.shade50,
-                                child: Center(
-                                  child: Text(
-                                    'No background image available',
-                                    style: TextStyle(color: Colors.grey.shade600),
+              : Container(
+                  margin: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300, width: 2),
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.black,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Background image layer
+                        if (_selectedAlert?.id != null)
+                          Positioned.fill(
+                            child: Image.network(
+                              'http://localhost:8080/api/skeleton/alerts/${_selectedAlert!.id}/background-image',
+                              fit: BoxFit.contain,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
                                   ),
-                                ),
-                              ),
-                            
-                            // Skeleton overlay
-                            CustomPaint(
-                              painter: SkeletonPainter(_skeletonFrame!),
-                              size: Size.infinite,
-                            ),
-                            
-                            // Info overlay
-                            Positioned(
-                              top: 16,
-                              right: 16,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: const BoxDecoration(
-                                            color: Colors.red,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Keypoints',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: Colors.grey.shade800,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      size: 64,
+                                      color: Colors.white54,
                                     ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          width: 12,
-                                          height: 2,
-                                          color: Colors.green,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Text(
-                                          'Skeleton',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (_selectedAlert?.backgroundUrl != null) ...[
-                                      const SizedBox(height: 4),
-                                      const Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.image,
-                                            color: Colors.white,
-                                            size: 12,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Background',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                          ],
+                          ),
+                        
+                        // Skeleton video player overlay
+                        SkeletonVideoPlayer(
+                          frames: _skeletonFrames,
+                          frameRate: 25.0, // Typical camera frame rate
+                          autoPlay: true,
                         ),
-                      ),
+                        
+                        // Info badge
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${_skeletonFrames.length} frames • ${(_skeletonFrames.length / 25).toStringAsFixed(1)}s',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                ),
         ),
       ],
     );

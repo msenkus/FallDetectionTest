@@ -1,3 +1,44 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ demo ---
+[INFO] Deleting /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ demo ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ demo ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 15 source files with javac [debug release 17] to target/classes
+[INFO] /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/src/main/java/com/example/demo/service/AltumViewService.java: /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/src/main/java/com/example/demo/service/AltumViewService.java uses unchecked or unsafe operations.
+[INFO] /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/src/main/java/com/example/demo/service/AltumViewService.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] >>> spring-boot:3.2.0:run (default-cli) > test-compile @ demo >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ demo ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ demo ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ demo ---
+[INFO] skip non existing resourceDirectory /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ demo ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 1 source file with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] <<< spring-boot:3.2.0:run (default-cli) < test-compile @ demo <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.0:run (default-cli) @ demo ---
+[INFO] Attaching agents: []
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -7,321 +48,26 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.0)
 
-2025-10-20T22:22:05.254-04:00  INFO 95912 --- [           main] com.example.demo.DemoApplication         : Starting DemoApplication v0.0.1-SNAPSHOT using Java 17.0.15 with PID 95912 (/Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/target/demo-0.0.1-SNAPSHOT.jar started by marksenkus in /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend)
-2025-10-20T22:22:05.257-04:00  INFO 95912 --- [           main] com.example.demo.DemoApplication         : No active profile set, falling back to 1 default profile: "default"
-2025-10-20T22:22:05.620-04:00  INFO 95912 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2025-10-20T22:22:05.623-04:00  INFO 95912 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-10-20T22:22:05.623-04:00  INFO 95912 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
-2025-10-20T22:22:05.638-04:00  INFO 95912 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-10-20T22:22:05.638-04:00  INFO 95912 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 343 ms
-2025-10-20T22:22:05.835-04:00  INFO 95912 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
-2025-10-20T22:22:05.841-04:00  INFO 95912 --- [           main] com.example.demo.DemoApplication         : Started DemoApplication in 0.746 seconds (process running for 0.924)
-2025-10-20T22:23:06.066-04:00  INFO 95912 --- [0.0-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-10-20T22:23:06.066-04:00  INFO 95912 --- [0.0-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-10-20T22:23:06.066-04:00  INFO 95912 --- [0.0-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
-2025-10-20T22:23:06.079-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : Requesting new access token from https://oauth.altumview.com/v1.0/token
-2025-10-20T22:23:06.771-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Obtained new access token, expires in 3599 seconds
-2025-10-20T22:23:07.557-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:23:09.096-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:09.096-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:09.330-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : ✓ Retrieved MQTT credentials
-2025-10-20T22:23:09.330-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:09.496-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:23:09.497-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:10.337-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:23:10.554-04:00  INFO 95912 --- [0.0-8080-exec-2] c.example.demo.service.AltumViewService  : ✓ Built complete skeleton stream config for camera 19401
-2025-10-20T22:23:10.577-04:00  INFO 95912 --- [0.0-8080-exec-3] c.e.d.w.SkeletonWebSocketHandler         : WebSocket connected: 211422e8-40a6-b32f-a51d-90c10a3d68a1
-2025-10-20T22:23:10.583-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:10.938-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : ✓ Retrieved MQTT credentials
-2025-10-20T22:23:10.938-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:11.236-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:23:11.238-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:12.252-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:23:12.466-04:00  INFO 95912 --- [0.0-8080-exec-3] c.e.d.w.SkeletonWebSocketHandler         : Connecting to MQTT for camera 238071A4F37D31EE (ID: 19401) on session 211422e8-40a6-b32f-a51d-90c10a3d68a1
-2025-10-20T22:23:12.466-04:00  INFO 95912 --- [0.0-8080-exec-3] c.e.d.w.SkeletonWebSocketHandler         : Connecting to MQTT broker: prod.altumview.com:8084/mqtt
-2025-10-20T22:23:13.482-04:00  INFO 95912 --- [ionThreadPool-1] c.e.d.w.SkeletonWebSocketHandler         : MQTT connected for session 211422e8-40a6-b32f-a51d-90c10a3d68a1
-2025-10-20T22:23:14.126-04:00  INFO 95912 --- [ionThreadPool-2] c.e.d.w.SkeletonWebSocketHandler         : Subscribed to topic: mobileClient/57087/camera/238071A4F37D31EE/skeleton/826815809
-2025-10-20T22:23:57.575-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:23:58.495-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:24:42.570-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:24:43.625-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:25:27.570-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:25:28.474-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:26:12.573-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:26:14.054-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:26:57.573-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:26:58.943-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:27:42.574-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:27:43.842-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:28:27.572-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:28:28.697-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:29:12.575-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:29:13.823-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:29:57.573-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:29:58.708-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:30:42.566-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:30:43.377-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:31:27.567-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:31:28.611-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:32:12.568-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:32:14.199-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:32:57.567-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:32:59.025-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:33:42.568-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:33:43.690-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:34:27.568-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:34:28.576-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:35:12.566-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:35:13.766-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:35:57.567-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:35:58.675-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:36:42.565-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:36:43.808-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:37:27.567-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:37:28.995-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:38:12.567-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:38:13.457-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:38:57.564-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:38:58.766-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:39:42.562-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:39:43.400-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:40:27.566-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:40:28.570-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:41:12.565-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:13.729-04:00  INFO 95912 --- [pool-3-thread-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:41:19.025-04:00  INFO 95912 --- [0.0-8080-exec-5] c.e.d.w.SkeletonWebSocketHandler         : WebSocket disconnected: 211422e8-40a6-b32f-a51d-90c10a3d68a1
-2025-10-20T22:41:19.106-04:00  INFO 95912 --- [onThreadPool-12] c.e.d.w.SkeletonWebSocketHandler         : MQTT disconnected for session 211422e8-40a6-b32f-a51d-90c10a3d68a1
-2025-10-20T22:41:20.431-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:20.431-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:21.411-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : ✓ Retrieved MQTT credentials
-2025-10-20T22:41:21.411-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:21.716-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:41:21.716-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:22.841-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:41:25.938-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : ✓ Built complete skeleton stream config for camera 19401
-2025-10-20T22:41:25.942-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:25.942-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:25.946-04:00  INFO 95912 --- [0.0-8080-exec-8] c.e.d.w.SkeletonWebSocketHandler         : WebSocket connected: e4544bc5-2df8-f037-20d7-9ab368769d1c
-2025-10-20T22:41:25.960-04:00  INFO 95912 --- [0.0-8080-exec-9] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:26.325-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : ✓ Retrieved MQTT credentials
-2025-10-20T22:41:26.328-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:26.452-04:00  INFO 95912 --- [0.0-8080-exec-9] c.example.demo.service.AltumViewService  : ✓ Retrieved MQTT credentials
-2025-10-20T22:41:26.452-04:00  INFO 95912 --- [0.0-8080-exec-9] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:26.639-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:41:26.639-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:26.722-04:00  INFO 95912 --- [0.0-8080-exec-9] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:41:26.722-04:00  INFO 95912 --- [0.0-8080-exec-9] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:27.734-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:41:27.943-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : ✓ Built complete skeleton stream config for camera 19401
-2025-10-20T22:41:27.952-04:00  INFO 95912 --- [.0-8080-exec-10] c.e.d.w.SkeletonWebSocketHandler         : WebSocket connected: c3688b27-efca-f6a4-5772-7ed05cb9786d
-2025-10-20T22:41:27.963-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:28.372-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Retrieved MQTT credentials
-2025-10-20T22:41:28.373-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:28.682-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:41:28.682-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:29.499-04:00  INFO 95912 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:41:29.711-04:00  INFO 95912 --- [0.0-8080-exec-1] c.e.d.w.SkeletonWebSocketHandler         : Connecting to MQTT for camera 238071A4F37D31EE (ID: 19401) on session c3688b27-efca-f6a4-5772-7ed05cb9786d
-2025-10-20T22:41:29.711-04:00  INFO 95912 --- [0.0-8080-exec-1] c.e.d.w.SkeletonWebSocketHandler         : Connecting to MQTT broker: prod.altumview.com:8084/mqtt
-2025-10-20T22:41:29.815-04:00  INFO 95912 --- [0.0-8080-exec-2] c.e.d.w.SkeletonWebSocketHandler         : WebSocket disconnected: c3688b27-efca-f6a4-5772-7ed05cb9786d
-2025-10-20T22:41:29.815-04:00  WARN 95912 --- [onThreadPool-13] c.e.d.w.SkeletonWebSocketHandler         : Error disconnecting MQTT
-
-com.hivemq.client.mqtt.exceptions.MqttClientStateException: MQTT client is not connected.
-
-2025-10-20T22:41:30.605-04:00  INFO 95912 --- [onThreadPool-14] c.e.d.w.SkeletonWebSocketHandler         : MQTT connected for session c3688b27-efca-f6a4-5772-7ed05cb9786d
-2025-10-20T22:41:30.930-04:00  INFO 95912 --- [0.0-8080-exec-9] c.example.demo.service.AltumViewService  : ✓ Retrieved stream token for camera 19401
-2025-10-20T22:41:31.133-04:00  INFO 95912 --- [0.0-8080-exec-9] c.e.d.w.SkeletonWebSocketHandler         : Connecting to MQTT for camera 238071A4F37D31EE (ID: 19401) on session e4544bc5-2df8-f037-20d7-9ab368769d1c
-2025-10-20T22:41:31.133-04:00  INFO 95912 --- [0.0-8080-exec-9] c.e.d.w.SkeletonWebSocketHandler         : Connecting to MQTT broker: prod.altumview.com:8084/mqtt
-2025-10-20T22:41:31.180-04:00  INFO 95912 --- [onThreadPool-15] c.e.d.w.SkeletonWebSocketHandler         : Subscribed to topic: mobileClient/57087/camera/238071A4F37D31EE/skeleton/826815809
-2025-10-20T22:41:31.181-04:00 ERROR 95912 --- [onThreadPool-15] c.e.d.w.SkeletonWebSocketHandler         : Error sending success message
-
-java.lang.IllegalStateException: The WebSocket session [2] has been closed and no method (apart from close()) may be called on a closed session
-	at org.apache.tomcat.websocket.WsSession.checkState(WsSession.java:978) ~[tomcat-embed-websocket-10.1.16.jar!/:na]
-	at org.apache.tomcat.websocket.WsSession.getBasicRemote(WsSession.java:529) ~[tomcat-embed-websocket-10.1.16.jar!/:na]
-	at org.springframework.web.socket.adapter.standard.StandardWebSocketSession.sendTextMessage(StandardWebSocketSession.java:215) ~[spring-websocket-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.socket.adapter.AbstractWebSocketSession.sendMessage(AbstractWebSocketSession.java:108) ~[spring-websocket-6.1.1.jar!/:6.1.1]
-	at com.example.demo.websocket.SkeletonWebSocketHandler.lambda$connectToMqtt$4(SkeletonWebSocketHandler.java:166) ~[!/:0.0.1-SNAPSHOT]
-	at java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:863) ~[na:na]
-	at java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:841) ~[na:na]
-	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:510) ~[na:na]
-	at java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2147) ~[na:na]
-	at com.hivemq.client.internal.mqtt.mqtt3.Mqtt3AsyncClientView.lambda$handleSubAck$0(Mqtt3AsyncClientView.java:69) ~[hivemq-mqtt-client-1.3.3.jar!/:na]
-	at java.base/java.util.concurrent.CompletableFuture.uniWhenComplete(CompletableFuture.java:863) ~[na:na]
-	at java.base/java.util.concurrent.CompletableFuture$UniWhenComplete.tryFire(CompletableFuture.java:841) ~[na:na]
-	at java.base/java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:510) ~[na:na]
-	at java.base/java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2147) ~[na:na]
-	at com.hivemq.client.rx.FlowableWithSingle$SingleFutureSubscriber.onSingle(FlowableWithSingle.java:399) ~[hivemq-mqtt-client-1.3.3.jar!/:na]
-	at com.hivemq.client.internal.rx.operators.FlowableWithSingleCombine$SplitSubscriber.tryOnNext(FlowableWithSingleCombine.java:196) ~[hivemq-mqtt-client-1.3.3.jar!/:na]
-	at io.reactivex.internal.operators.flowable.FlowableObserveOn$ObserveOnConditionalSubscriber.runAsync(FlowableObserveOn.java:649) ~[rxjava-2.2.21.jar!/:na]
-	at io.reactivex.internal.operators.flowable.FlowableObserveOn$BaseObserveOnSubscriber.run(FlowableObserveOn.java:176) ~[rxjava-2.2.21.jar!/:na]
-	at io.reactivex.internal.schedulers.ScheduledRunnable.run(ScheduledRunnable.java:66) ~[rxjava-2.2.21.jar!/:na]
-	at io.reactivex.internal.schedulers.ScheduledRunnable.call(ScheduledRunnable.java:57) ~[rxjava-2.2.21.jar!/:na]
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
-	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
-	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
-
-2025-10-20T22:41:31.961-04:00  INFO 95912 --- [ionThreadPool-1] c.e.d.w.SkeletonWebSocketHandler         : MQTT connected for session e4544bc5-2df8-f037-20d7-9ab368769d1c
-2025-10-20T22:41:32.570-04:00  INFO 95912 --- [ionThreadPool-2] c.e.d.w.SkeletonWebSocketHandler         : Subscribed to topic: mobileClient/57087/camera/238071A4F37D31EE/skeleton/826815809
-2025-10-20T22:41:33.744-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:34.105-04:00  INFO 95912 --- [0.0-8080-exec-3] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 cameras
-2025-10-20T22:41:34.109-04:00  INFO 95912 --- [0.0-8080-exec-4] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:34.109-04:00  INFO 95912 --- [0.0-8080-exec-5] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:34.109-04:00  INFO 95912 --- [0.0-8080-exec-4] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:34.308-04:00 ERROR 95912 --- [0.0-8080-exec-4] c.example.demo.service.AltumViewService  : ✗ Error getting preview token: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-2025-10-20T22:41:34.308-04:00 ERROR 95912 --- [0.0-8080-exec-4] c.example.demo.service.AltumViewService  : ✗ Error getting camera view: Failed to get preview token: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-
-java.lang.RuntimeException: Failed to get preview token: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-	at com.example.demo.service.AltumViewService.getPreviewToken(AltumViewService.java:273) ~[!/:0.0.1-SNAPSHOT]
-	at com.example.demo.service.AltumViewService.getCameraView(AltumViewService.java:598) ~[!/:0.0.1-SNAPSHOT]
-	at com.example.demo.controller.SkeletonController.getCameraView(SkeletonController.java:155) ~[!/:0.0.1-SNAPSHOT]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569) ~[na:na]
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:254) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:182) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:917) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:829) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:340) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
-Caused by: org.springframework.web.client.HttpClientErrorException$Forbidden: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-	at org.springframework.web.client.HttpClientErrorException.create(HttpClientErrorException.java:109) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:183) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:137) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.ResponseErrorHandler.handleError(ResponseErrorHandler.java:63) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:932) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:881) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:781) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:663) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at com.example.demo.service.AltumViewService.getPreviewToken(AltumViewService.java:248) ~[!/:0.0.1-SNAPSHOT]
-	... 56 common frames omitted
-
-2025-10-20T22:41:34.370-04:00  INFO 95912 --- [0.0-8080-exec-5] c.example.demo.service.AltumViewService  : ✓ Retrieved background URL for camera 19401
-2025-10-20T22:41:34.752-04:00  INFO 95912 --- [0.0-8080-exec-5] c.example.demo.service.AltumViewService  : ✓ Retrieved camera background image for camera 19401, size: 40015 bytes
-2025-10-20T22:41:35.453-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:35.453-04:00  INFO 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:35.654-04:00 ERROR 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : ✗ Error getting preview token: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-2025-10-20T22:41:35.655-04:00 ERROR 95912 --- [0.0-8080-exec-6] c.example.demo.service.AltumViewService  : ✗ Error getting camera view: Failed to get preview token: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-
-java.lang.RuntimeException: Failed to get preview token: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-	at com.example.demo.service.AltumViewService.getPreviewToken(AltumViewService.java:273) ~[!/:0.0.1-SNAPSHOT]
-	at com.example.demo.service.AltumViewService.getCameraView(AltumViewService.java:598) ~[!/:0.0.1-SNAPSHOT]
-	at com.example.demo.controller.SkeletonController.getCameraView(SkeletonController.java:155) ~[!/:0.0.1-SNAPSHOT]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569) ~[na:na]
-	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:254) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:182) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:917) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:829) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.1.jar!/:6.1.1]
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:340) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.16.jar!/:na]
-	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
-Caused by: org.springframework.web.client.HttpClientErrorException$Forbidden: 403 Forbidden: "{"message":"Invalid key=value pair (missing equal-sign) in Authorization header (hashed with SHA-256 and encoded with Base64): 'tbRvjSo2TedsHCMOSbxNb2REExyMEjpwLKhpVAE89Cc='."}"
-	at org.springframework.web.client.HttpClientErrorException.create(HttpClientErrorException.java:109) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:183) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:137) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.ResponseErrorHandler.handleError(ResponseErrorHandler.java:63) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:932) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:881) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:781) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:663) ~[spring-web-6.1.1.jar!/:6.1.1]
-	at com.example.demo.service.AltumViewService.getPreviewToken(AltumViewService.java:248) ~[!/:0.0.1-SNAPSHOT]
-	... 56 common frames omitted
-
-2025-10-20T22:41:39.117-04:00  INFO 95912 --- [0.0-8080-exec-8] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:39.431-04:00  INFO 95912 --- [0.0-8080-exec-8] c.example.demo.service.AltumViewService  : ✓ Retrieved background URL for camera 19401
-2025-10-20T22:41:39.532-04:00  INFO 95912 --- [0.0-8080-exec-8] c.example.demo.service.AltumViewService  : ✓ Retrieved camera background image for camera 19401, size: 40015 bytes
-2025-10-20T22:41:43.583-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : Using cached access token
-2025-10-20T22:41:43.936-04:00  INFO 95912 --- [0.0-8080-exec-7] c.example.demo.service.AltumViewService  : ✓ Retrieved 1 alerts
-2025-10-20T22:42:12.122-04:00  INFO 95912 --- [.0-8080-exec-10] c.e.d.w.SkeletonWebSocketHandler         : WebSocket disconnected: e4544bc5-2df8-f037-20d7-9ab368769d1c
-2025-10-20T22:42:12.200-04:00  INFO 95912 --- [ionThreadPool-4] c.e.d.w.SkeletonWebSocketHandler         : MQTT disconnected for session e4544bc5-2df8-f037-20d7-9ab368769d1c
+2025-10-25T11:28:06.514-04:00  INFO 50749 --- [           main] com.example.demo.DemoApplication         : Starting DemoApplication using Java 17.0.15 with PID 50749 (/Users/marksenkus/Documents/Projects/FallDetectionTest/Backend/target/classes started by marksenkus in /Users/marksenkus/Documents/Projects/FallDetectionTest/Backend)
+2025-10-25T11:28:06.516-04:00  INFO 50749 --- [           main] com.example.demo.DemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-10-25T11:28:06.754-04:00  INFO 50749 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-25T11:28:06.757-04:00  INFO 50749 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-25T11:28:06.757-04:00  INFO 50749 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-10-25T11:28:06.772-04:00  INFO 50749 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-25T11:28:06.772-04:00  INFO 50749 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 241 ms
+2025-10-25T11:28:06.903-04:00  INFO 50749 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2025-10-25T11:28:06.906-04:00  INFO 50749 --- [           main] com.example.demo.DemoApplication         : Started DemoApplication in 0.495 seconds (process running for 0.584)
+2025-10-25T11:29:17.783-04:00  INFO 50749 --- [0.0-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-25T11:29:17.783-04:00  INFO 50749 --- [0.0-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-10-25T11:29:17.783-04:00  INFO 50749 --- [0.0-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2025-10-25T11:29:17.791-04:00  INFO 50749 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : Requesting new access token from https://oauth.altumview.com/v1.0/token
+2025-10-25T11:29:18.289-04:00  INFO 50749 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Obtained new access token, expires in 3599 seconds
+2025-10-25T11:29:18.290-04:00  INFO 50749 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : Requesting alert 68f80eef3b7ef81b8fb8de1e from https://api.altumview.com/v1.0/alerts/68f80eef3b7ef81b8fb8de1e
+2025-10-25T11:29:18.904-04:00  INFO 50749 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Alert 68f80eef3b7ef81b8fb8de1e has skeleton_file (length: 11912 chars)
+2025-10-25T11:29:18.904-04:00  INFO 50749 --- [0.0-8080-exec-1] c.example.demo.service.AltumViewService  : ✓ Successfully mapped alert 68f80eef3b7ef81b8fb8de1e
+🎬 Decoding 8934 bytes
+📋 Version: 3
+📋 alertId=1761087215, cameraId=4294967294, metadata=63
+📹 Frame 0: deltaTime=164, people=92
+⚠️ Frame 0 claims 92 people (suspicious), stopping
+✅ Decoded 0 frames

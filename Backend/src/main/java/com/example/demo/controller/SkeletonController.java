@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.service.AltumViewService;
-import com.example.demo.util.SkeletonDecoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -138,8 +137,9 @@ public class SkeletonController {
                         .body(Map.of("error", "No skeleton data available for this alert"));
             }
             
-            // Decode the REAL skeleton data from binary MQTT format
-            Map<String, Object> skeletonData = SkeletonDecoder.decode(alert.getSkeletonFile());
+            // Decode using the Recording format (not MQTT stream format!)
+            // Alerts use the Skeleton Recordings Binary Format from /recordings API
+            Map<String, Object> skeletonData = com.example.demo.util.SkeletonRecordingDecoder.decode(alert.getSkeletonFile());
             
             return ResponseEntity.ok(skeletonData);
             

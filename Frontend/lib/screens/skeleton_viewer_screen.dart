@@ -189,7 +189,7 @@ class _SkeletonViewerScreenState extends State<SkeletonViewerScreen> {
                   ? 'Connected - ${currentFrame?.people.length ?? 0} person(s) detected'
                   : 'Disconnected',
               style: TextStyle(
-                color: isConnected ? Colors.green : Colors.red,
+                color: isConnected ? const Color.fromARGB(255, 175, 76, 76) : Colors.red,
                 fontWeight: FontWeight.bold,
               ),
             ),
