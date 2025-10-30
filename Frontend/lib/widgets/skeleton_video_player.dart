@@ -10,12 +10,16 @@ class SkeletonVideoPlayer extends StatefulWidget {
   final List<SkeletonFrame> frames;
   final double frameRate; // Frames per second (default: 25 fps)
   final bool autoPlay;
+  final int? totalEpochTime; // Total time span from skeleton data
+  final int? numFrames; // Number of frames from skeleton data
   
   const SkeletonVideoPlayer({
     super.key,
     required this.frames,
     this.frameRate = 25.0,
     this.autoPlay = true,
+    this.totalEpochTime,
+    this.numFrames,
   });
   
   @override
@@ -48,7 +52,24 @@ class _SkeletonVideoPlayerState extends State<SkeletonVideoPlayer> {
       isPlaying = true;
     });
     
-    final frameDuration = Duration(milliseconds: (1000 / widget.frameRate).round());
+    // Calculate frame duration from skeleton data if available
+    Duration frameDuration;
+    if (widget.totalEpochTime != null && widget.numFrames != null && widget.numFrames! > 0) {
+      // Use actual timing from skeleton data
+      // epochTime appears to be the total duration, so divide by frames for interval
+      final intervalMs = widget.totalEpochTime! / widget.numFrames!;
+      
+      // Clamp the interval to reasonable values (10ms to 1000ms)
+      final clampedInterval = intervalMs.clamp(10.0, 1000.0);
+      frameDuration = Duration(milliseconds: clampedInterval.round());
+      
+      final calculatedFPS = 1000.0 / clampedInterval;
+      print('🎬 Using skeleton timing: ${clampedInterval}ms per frame (~${calculatedFPS.toStringAsFixed(1)} FPS)');
+    } else {
+      // Fallback to provided frame rate
+      frameDuration = Duration(milliseconds: (1000 / widget.frameRate).round());
+      print('🎬 Using fallback timing: ${1000/widget.frameRate}ms per frame (${widget.frameRate} FPS)');
+    }
     
     _playbackTimer = Timer.periodic(frameDuration, (timer) {
       if (!mounted) {
@@ -113,6 +134,8 @@ class _SkeletonVideoPlayerState extends State<SkeletonVideoPlayer> {
         ),
       );
     }
+    
+    print('🎬 SkeletonVideoPlayer: ${widget.frames.length} frames, current: $currentFrameIndex');
     
     final currentFrame = widget.frames[currentFrameIndex];
     

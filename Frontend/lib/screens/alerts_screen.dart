@@ -19,6 +19,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
   String? _error;
   Alert? _selectedAlert;
   List<SkeletonFrame> _skeletonFrames = []; // Changed to list for video playback
+  Map<String, dynamic>? _skeletonTiming; // Store timing data for video playback
 
   @override
   void initState() {
@@ -99,6 +100,11 @@ class _AlertsScreenState extends State<AlertsScreen> {
           final frames = _apiService.parseSkeletonFrames(skeletonJson);
           print('Parsed ${frames.length} frames');
           
+          // Extract timing data for proper playback
+          int? totalEpochTime = skeletonJson['epochTime'];
+          int? numFrames = skeletonJson['numFrames'];
+          print('Timing data: epochTime=$totalEpochTime, numFrames=$numFrames');
+          
           if (frames.isNotEmpty) {
             final totalPeople = frames.fold<int>(0, (sum, frame) => sum + frame.people.length);
             final totalKeypoints = frames.fold<int>(0, (sum, frame) => 
@@ -108,6 +114,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
           
           setState(() {
             _skeletonFrames = frames;
+            _skeletonTiming = {'epochTime': totalEpochTime, 'numFrames': numFrames};
           });
         } catch (e) {
           print('Error parsing skeleton data: $e');
@@ -433,8 +440,10 @@ class _AlertsScreenState extends State<AlertsScreen> {
                         // Skeleton video player overlay
                         SkeletonVideoPlayer(
                           frames: _skeletonFrames,
-                          frameRate: 25.0, // Typical camera frame rate
+                          frameRate: 25.0, // Fallback frame rate
                           autoPlay: true,
+                          totalEpochTime: _skeletonTiming?['epochTime'],
+                          numFrames: _skeletonTiming?['numFrames'],
                         ),
                         
                         // Info badge

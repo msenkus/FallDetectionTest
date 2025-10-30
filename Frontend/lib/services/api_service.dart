@@ -183,6 +183,11 @@ class ApiService {
     
     print('🔍 parseSkeletonFrames - Input keys: ${skeletonData.keys.toList()}');
     
+    // Get global dimensions if available (for coordinate conversion)
+    double globalWidth = (skeletonData['width'] ?? 1.0).toDouble();
+    double globalHeight = (skeletonData['height'] ?? 1.0).toDouble();
+    print('📐 Global dimensions: ${globalWidth}x${globalHeight}');
+    
     // Check if this is multi-frame format
     if (skeletonData.containsKey('frames') && skeletonData['frames'] is List) {
       // Multi-frame format (alert skeleton files)
@@ -191,15 +196,27 @@ class ApiService {
       
       for (var frameData in frameList) {
         if (frameData is Map<String, dynamic>) {
-          frames.add(_parseFrame(frameData));
+          // Add global dimensions to frame data for coordinate conversion
+          Map<String, dynamic> frameWithDimensions = Map.from(frameData);
+          frameWithDimensions['width'] = globalWidth;
+          frameWithDimensions['height'] = globalHeight;
+          
+          frames.add(_parseFrame(frameWithDimensions));
         }
       }
+    } else if (skeletonData.containsKey('keypoints')) {
+      // Single frame with new keypoints format
+      print('📦 Parsing single frame from keypoints key');
+      Map<String, dynamic> frameWithDimensions = Map.from(skeletonData);
+      frameWithDimensions['width'] = globalWidth;
+      frameWithDimensions['height'] = globalHeight;
+      frames.add(_parseFrame(frameWithDimensions));
     } else if (skeletonData.containsKey('people')) {
       // Single frame format (backward compatibility)
       print('📦 Parsing single frame from people key');
       frames.add(_parseFrame(skeletonData));
     } else {
-      print('❌ No frames or people key found in skeleton data!');
+      print('❌ No frames, keypoints, or people key found in skeleton data!');
     }
     
     print('✅ Parsed ${frames.length} frames total');
@@ -210,8 +227,47 @@ class ApiService {
   SkeletonFrame _parseFrame(Map<String, dynamic> frameData) {
     List<List<SkeletonKeypoint>> people = [];
     
-    if (frameData.containsKey('people') && frameData['people'] is List) {
+    // Handle new keypoints format (from updated Java decoder)
+    if (frameData.containsKey('keypoints') && frameData['keypoints'] is Map) {
+      Map<String, dynamic> keypointsMap = frameData['keypoints'];
+      print('📦 Parsing keypoints map format with ${keypointsMap.length} keypoints');
+      
+      // Create an array of 18 keypoints (OpenPose format)
+      List<SkeletonKeypoint> keypoints = List.generate(18, (index) => SkeletonKeypoint(0.0, 0.0));
+      
+      // Get frame dimensions for coordinate conversion
+      double width = (frameData['width'] ?? 1.0).toDouble();
+      double height = (frameData['height'] ?? 1.0).toDouble();
+      
+      // Fill in the actual keypoints from the map
+      for (var entry in keypointsMap.entries) {
+        int index = int.tryParse(entry.key) ?? -1;
+        if (index >= 0 && index < 18 && entry.value is Map) {
+          Map<String, dynamic> point = entry.value;
+          
+          // Convert from raw coordinates to normalized (0-1) coordinates
+          double x = ((point['x'] ?? 0) as num).toDouble() / width;
+          double y = ((point['y'] ?? 0) as num).toDouble() / height;
+          
+          // Only add non-zero keypoints
+          if (x > 0 && y > 0) {
+            keypoints[index] = SkeletonKeypoint(x, y);
+            print('  Keypoint $index: (${point['x']}, ${point['y']}) -> ($x, $y)');
+          }
+        }
+      }
+      
+      // Add the person if we have any valid keypoints
+      int validKeypoints = keypoints.where((kp) => kp.x > 0 || kp.y > 0).length;
+      if (validKeypoints > 0) {
+        people.add(keypoints);
+        print('✅ Added person with $validKeypoints valid keypoints');
+      }
+    }
+    // Handle old people format (backward compatibility)
+    else if (frameData.containsKey('people') && frameData['people'] is List) {
       List<dynamic> peopleData = frameData['people'];
+      print('📦 Parsing legacy people array format with ${peopleData.length} people');
       
       for (var personData in peopleData) {
         if (personData is List) {
